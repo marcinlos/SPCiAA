@@ -34,7 +34,7 @@ abstract class Production extends Thread {
 		//apply the production
 		m_vertex = apply(m_vertex);
 		//plot the graph
-		m_drawer.draw(m_vertex);
+//		m_drawer.draw(m_vertex);
 		try {
 			m_barrier.await();
 		} catch (InterruptedException | BrokenBarrierException e) {
@@ -50,7 +50,7 @@ class P1 extends Production {
 	}
 
 	Vertex apply(Vertex S) {
-		System.out.println("p1");
+//		System.out.println("p1");
 		Vertex T1 = new Vertex(null, null, S, "T");
 		Vertex T2 = new Vertex(null, null, S, "T");
 		S.set_left(T1);
@@ -66,7 +66,7 @@ class P2 extends Production {
 	}
 
 	Vertex apply(Vertex vert) {
-		System.out.println("p2");
+//		System.out.println("p2");
 		Vertex t1 = new Vertex(null, null, vert, "T");
 		Vertex t2 = new Vertex(null, null, vert, "T");
 		vert.set_left(t1);
@@ -82,7 +82,7 @@ class P3 extends Production {
 	}
 
 	Vertex apply(Vertex vert) {
-		System.out.println("p3");
+//		System.out.println("p3");
 		Vertex t1 = new Vertex(null, null, vert, "node");
 		Vertex t2 = new Vertex(null, null, vert, "node");
 		vert.set_left(t1);
@@ -100,15 +100,15 @@ class A extends Production {
 
 	@Override
 	Vertex apply(Vertex vert) {
-		System.out.println("A");
+//		System.out.println("A");
 		vert.m_a[1][1] = h/3.0;
 		vert.m_a[2][1] = h/6.0;
 		vert.m_a[1][2] = h/6.0;
 		vert.m_a[2][2] = h/3.0;
 		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * (vert.m_x_old[1] - vert.m_x_old[2] - 1);
+				- dt * (-vert.m_x_old[1] + vert.m_x_old[2] - 1);
 		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * (-vert.m_x_old[1] + vert.m_x_old[2]);
+				- dt * ( vert.m_x_old[1] - vert.m_x_old[2]);
 		return vert;
 	}
 
@@ -120,15 +120,15 @@ class A1 extends Production {
 	}
 
 	Vertex apply(Vertex vert) {
-		System.out.println("A");
+//		System.out.println("A");
 		vert.m_a[1][1] = h/3.0;
 		vert.m_a[2][1] = h/6.0;
 		vert.m_a[1][2] = h/6.0;
 		vert.m_a[2][2] = h/3.0;
 		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * (vert.m_x_old[1] - vert.m_x_old[2]);
+				- dt * (-vert.m_x_old[1] + vert.m_x_old[2]);
 		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * (-vert.m_x_old[1] + vert.m_x_old[2]);vert.m_b[1] = 0.0;
+				- dt * (vert.m_x_old[1] - vert.m_x_old[2]);vert.m_b[1] = 0.0;
 		vert.m_b[2] = 0.0;
 		return vert;
 	}
@@ -140,15 +140,15 @@ class AN extends Production {
 	}
 
 	Vertex apply(Vertex vert) {
-		System.out.println("AN");
+//		System.out.println("AN");
 		vert.m_a[1][1] = h/3.0;
 		vert.m_a[2][1] = h/6.0;
 		vert.m_a[1][2] = h/6.0;
 		vert.m_a[2][2] = h/3.0;
 		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * (vert.m_x_old[1] - vert.m_x_old[2] - 1);
+				- dt * (-vert.m_x_old[1] + vert.m_x_old[2] - 1);
 		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * (-vert.m_x_old[1] + vert.m_x_old[2] + 1);
+				- dt * (+vert.m_x_old[1] - vert.m_x_old[2] + 1);
 		return vert;
 	}
 }
@@ -159,7 +159,7 @@ class A2 extends Production {
 	}
 
 	Vertex apply(Vertex T) {
-		System.out.println("A2");
+//		System.out.println("A2");
 		T.m_a[0][0] = T.m_left.m_a[2][2] + T.m_right.m_a[1][1];
 		T.m_a[1][0] = T.m_left.m_a[1][2];
 		T.m_a[2][0] = T.m_right.m_a[2][1];
@@ -182,7 +182,7 @@ class E2 extends Production {
 	}
 
 	Vertex apply(Vertex T) {
-		System.out.println("E2");
+//		System.out.println("E2");
 		T.m_b[0] /= T.m_a[0][0];
 		T.m_a[0][2] /= T.m_a[0][0];
 		T.m_a[0][1] /= T.m_a[0][0];
@@ -213,7 +213,7 @@ class Eroot extends Production {
 	}
 
 	Vertex apply(Vertex T) {
-		System.out.println("Eroot");
+//		System.out.println("Eroot");
 
 		// T.m_x = GaussianElimination.lsolve(T.m_a, T.m_b);
 
@@ -252,7 +252,11 @@ class BS extends Production {
 
 	@Override
 	Vertex apply(Vertex T) {
-		System.out.println("BS");
+//		System.out.println("BS");
+		T.m_x_old[0] = T.m_x[0];
+		T.m_x_old[1] = T.m_x[1];
+		T.m_x_old[2] = T.m_x[2];
+		
 		if (T.m_label.equals("node"))
 			return T;
 
