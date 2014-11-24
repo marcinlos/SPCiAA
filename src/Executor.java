@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 class Executor extends Thread {
 
-    private int power = 3;
+    private int power = 4;
 
     private final List<List<Vertex>> treesByLevel = new ArrayList<>();
 
@@ -83,7 +83,7 @@ class Executor extends Thread {
         traverse(p1.m_vertex, 0);
         
         
-        for (int t = 0; t < 10000; ++ t) {
+        for (int t = 0; t < 100000; ++ t) {
             
             makeBarrier(leafCount());
             A1 a1 = new A1(firstLeaf(), barrier);
@@ -130,16 +130,20 @@ class Executor extends Thread {
                 }
                 sync();
             }
-            
+
             // Output
-            if (t % 1000 == 0) {
+            if (t % 100 == 0) {
+                System.out.println("t = " + t);
+            }
+            if (t % 100 == 0) {
                 List<Double> result = new ArrayList<>();
-                for (int i = 0; i < leafCount() - 1; ++i) {
+                for (int i = 0; i < leafCount(); ++i) {
                     result.add(leaves().get(i).m_x[1]);
                 }
                 result.add(lastLeaf().m_x[2]);
                 ResultPrinter.printResult(result);
-                delay(1000);
+                delay(100);
+                
             }
         }
 

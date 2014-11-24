@@ -17,8 +17,8 @@ abstract class Production extends Thread {
 	GraphDrawer m_drawer;
 	// productions counter
 	CyclicBarrier m_barrier;
-	public static double h = 1.0;
-	public static double dt = 0.001;
+	public static double h = 1.0 / 15;
+	public static double dt = 0.0001;
 
 	Production(Vertex Vert, CyclicBarrier barrier) {
 		m_vertex = Vert;
@@ -105,10 +105,15 @@ class A extends Production {
 		vert.m_a[2][1] = h/6.0;
 		vert.m_a[1][2] = h/6.0;
 		vert.m_a[2][2] = h/3.0;
+		
+        vert.m_x_old[0] = vert.m_x[0];
+        vert.m_x_old[1] = vert.m_x[1];
+        vert.m_x_old[2] = vert.m_x[2];
+        
 		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * (-vert.m_x_old[1] + vert.m_x_old[2] - 1);
+				- dt * ( vert.m_x_old[1] / h - vert.m_x_old[2] / h);
 		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * ( vert.m_x_old[1] - vert.m_x_old[2]);
+				- dt * (-vert.m_x_old[1] / h + vert.m_x_old[2] / h);
 		return vert;
 	}
 
@@ -125,11 +130,15 @@ class A1 extends Production {
 		vert.m_a[2][1] = h/6.0;
 		vert.m_a[1][2] = h/6.0;
 		vert.m_a[2][2] = h/3.0;
+		
+        vert.m_x_old[0] = vert.m_x[0];
+        vert.m_x_old[1] = vert.m_x[1];
+        vert.m_x_old[2] = vert.m_x[2];
+		
 		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * (-vert.m_x_old[1] + vert.m_x_old[2]);
+				- dt * (vert.m_x_old[1] + vert.m_x_old[1] / h - vert.m_x_old[2] / h - 1);
 		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * (vert.m_x_old[1] - vert.m_x_old[2]);vert.m_b[1] = 0.0;
-		vert.m_b[2] = 0.0;
+				- dt * ( -vert.m_x_old[1] / h + vert.m_x_old[2] / h);
 		return vert;
 	}
 }
@@ -145,10 +154,15 @@ class AN extends Production {
 		vert.m_a[2][1] = h/6.0;
 		vert.m_a[1][2] = h/6.0;
 		vert.m_a[2][2] = h/3.0;
+		
+        vert.m_x_old[0] = vert.m_x[0];
+        vert.m_x_old[1] = vert.m_x[1];
+        vert.m_x_old[2] = vert.m_x[2];
+		
 		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * (-vert.m_x_old[1] + vert.m_x_old[2] - 1);
+				- dt * ( vert.m_x_old[1] / h - vert.m_x_old[2] / h);
 		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * (+vert.m_x_old[1] - vert.m_x_old[2] + 1);
+				- dt * ( -vert.m_x_old[1] / h + vert.m_x_old[2] / h + vert.m_x_old[2] + 1);
 		return vert;
 	}
 }
@@ -253,9 +267,6 @@ class BS extends Production {
 	@Override
 	Vertex apply(Vertex T) {
 //		System.out.println("BS");
-		T.m_x_old[0] = T.m_x[0];
-		T.m_x_old[1] = T.m_x[1];
-		T.m_x_old[2] = T.m_x[2];
 		
 		if (T.m_label.equals("node"))
 			return T;

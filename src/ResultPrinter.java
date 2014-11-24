@@ -24,9 +24,9 @@ public class ResultPrinter {
         double[] x = new double[result.size()];
         for (int i = 0; i < result.size(); ++i) {
             y[i] = result.get(i);
-            x[i] = i;
+            x[i] = i / (double) (result.size() - 1);
         }
-
+        plot.removeAllPlots();
         plot.addLinePlot("my plot", x, y);
     }
 }

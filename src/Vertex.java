@@ -35,15 +35,15 @@ class Vertex {
 		m_x_old[1] = 0.0;
 		m_x_old[2] = 0.0;
 	}
-	//empty constructor
-	Vertex(){
-		this.m_left=null;
-		this.m_right=null;
-		this.m_parent=null;
-		m_a = new double[3][3];
-		m_b = new double[3];
-		m_x = new double[3];
-	}
+//	//empty constructor
+//	Vertex(){
+//		this.m_left=null;
+//		this.m_right=null;
+//		this.m_parent=null;
+//		m_a = new double[3][3];
+//		m_b = new double[3];
+//		m_x = new double[3];
+//	}
 	
 
 	//methods for adding links
