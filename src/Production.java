@@ -101,19 +101,20 @@ class A extends Production {
 	@Override
 	Vertex apply(Vertex vert) {
 //		System.out.println("A");
-		vert.m_a[1][1] = h/3.0;
-		vert.m_a[2][1] = h/6.0;
-		vert.m_a[1][2] = h/6.0;
-		vert.m_a[2][2] = h/3.0;
+		vert.m_a[1][1] = h/3;
+		vert.m_a[2][1] = h/6;
+		vert.m_a[1][2] = h/6;
+		vert.m_a[2][2] = h/3;
 		
         vert.m_x_old[0] = vert.m_x[0];
         vert.m_x_old[1] = vert.m_x[1];
         vert.m_x_old[2] = vert.m_x[2];
         
-		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * ( vert.m_x_old[1] / h - vert.m_x_old[2] / h);
-		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * (-vert.m_x_old[1] / h + vert.m_x_old[2] / h);
+        double x1 = vert.m_x_old[1];
+        double x2 = vert.m_x_old[2];
+        
+		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h);
+		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h);
 		return vert;
 	}
 
@@ -126,19 +127,20 @@ class A1 extends Production {
 
 	Vertex apply(Vertex vert) {
 //		System.out.println("A");
-		vert.m_a[1][1] = h/3.0;
-		vert.m_a[2][1] = h/6.0;
-		vert.m_a[1][2] = h/6.0;
-		vert.m_a[2][2] = h/3.0;
+		vert.m_a[1][1] = h/3;
+		vert.m_a[2][1] = h/6;
+		vert.m_a[1][2] = h/6;
+		vert.m_a[2][2] = h/3;
 		
         vert.m_x_old[0] = vert.m_x[0];
         vert.m_x_old[1] = vert.m_x[1];
         vert.m_x_old[2] = vert.m_x[2];
+        
+        double x1 = vert.m_x_old[1];
+        double x2 = vert.m_x_old[2];
 		
-		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * (vert.m_x_old[1] + vert.m_x_old[1] / h - vert.m_x_old[2] / h - 1);
-		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * ( -vert.m_x_old[1] / h + vert.m_x_old[2] / h);
+		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h + x1 - 1);
+		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h);
 		return vert;
 	}
 }
@@ -150,19 +152,20 @@ class AN extends Production {
 
 	Vertex apply(Vertex vert) {
 //		System.out.println("AN");
-		vert.m_a[1][1] = h/3.0;
-		vert.m_a[2][1] = h/6.0;
-		vert.m_a[1][2] = h/6.0;
-		vert.m_a[2][2] = h/3.0;
+		vert.m_a[1][1] = h/3;
+		vert.m_a[2][1] = h/6;
+		vert.m_a[1][2] = h/6;
+		vert.m_a[2][2] = h/3;
 		
         vert.m_x_old[0] = vert.m_x[0];
         vert.m_x_old[1] = vert.m_x[1];
         vert.m_x_old[2] = vert.m_x[2];
+        
+        double x1 = vert.m_x_old[1];
+        double x2 = vert.m_x_old[2];
 		
-		vert.m_b[1] = vert.m_x_old[1] * h / 3.0 + vert.m_x_old[2] * h / 6.0
-				- dt * ( vert.m_x_old[1] / h - vert.m_x_old[2] / h);
-		vert.m_b[2] = vert.m_x_old[1] * h / 6.0 + vert.m_x_old[2] * h / 3.0
-				- dt * ( -vert.m_x_old[1] / h + vert.m_x_old[2] / h + vert.m_x_old[2] + 1);
+		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h);
+		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h + x2 + 1);
 		return vert;
 	}
 }
