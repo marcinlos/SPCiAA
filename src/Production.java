@@ -17,8 +17,11 @@ abstract class Production extends Thread {
 	GraphDrawer m_drawer;
 	// productions counter
 	CyclicBarrier m_barrier;
-	public static double h = 1.0 / 15;
-	public static double dt = 0.0001;
+	public static double h = 1.0 / 16;
+	public static double dt = 0.00651;
+//	public static double dt = 10;
+//	public static double dt = 0.0001;
+	public static double alpha = 0.0, beta = 1 - alpha;
 
 	Production(Vertex Vert, CyclicBarrier barrier) {
 		m_vertex = Vert;
@@ -101,10 +104,10 @@ class A extends Production {
 	@Override
 	Vertex apply(Vertex vert) {
 //		System.out.println("A");
-		vert.m_a[1][1] = h/3;
-		vert.m_a[2][1] = h/6;
-		vert.m_a[1][2] = h/6;
-		vert.m_a[2][2] = h/3;
+        vert.m_a[1][1] = h/3 + dt * beta / h;
+        vert.m_a[2][1] = h/6 - dt * beta / h;
+        vert.m_a[1][2] = h/6 - dt * beta / h;
+        vert.m_a[2][2] = h/3 + dt * beta / h;
 		
         vert.m_x_old[0] = vert.m_x[0];
         vert.m_x_old[1] = vert.m_x[1];
@@ -113,8 +116,16 @@ class A extends Production {
         double x1 = vert.m_x_old[1];
         double x2 = vert.m_x_old[2];
         
-		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h);
-		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h);
+        double m11 = h/3 - dt * alpha / h;
+        double m12 = h/6 + dt * alpha / h;
+        double m21 = h/6 + dt * alpha / h;
+        double m22 = h/3 - dt * alpha / h;
+        
+        vert.m_b[1] = x1 * m11 + x2 * m12;
+        vert.m_b[2] = x1 * m21 + x2 * m22;
+        
+//		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h);
+//		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h);
 		return vert;
 	}
 
@@ -127,10 +138,10 @@ class A1 extends Production {
 
 	Vertex apply(Vertex vert) {
 //		System.out.println("A");
-		vert.m_a[1][1] = h/3;
-		vert.m_a[2][1] = h/6;
-		vert.m_a[1][2] = h/6;
-		vert.m_a[2][2] = h/3;
+		vert.m_a[1][1] = h/3 + dt * beta * (1/h + 1);
+		vert.m_a[2][1] = h/6 - dt * beta / h;
+		vert.m_a[1][2] = h/6 - dt * beta / h;
+		vert.m_a[2][2] = h/3 + dt * beta / h;
 		
         vert.m_x_old[0] = vert.m_x[0];
         vert.m_x_old[1] = vert.m_x[1];
@@ -138,9 +149,17 @@ class A1 extends Production {
         
         double x1 = vert.m_x_old[1];
         double x2 = vert.m_x_old[2];
+        
+        double m11 = h/3 - dt * alpha * (1/h + 1);
+        double m12 = h/6 + dt * alpha / h;
+        double m21 = h/6 + dt * alpha / h;
+        double m22 = h/3 - dt * alpha / h;
+        
+        vert.m_b[1] = x1 * m11 + x2 * m12 + dt;
+        vert.m_b[2] = x1 * m21 + x2 * m22;
 		
-		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h + x1 - 1);
-		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h);
+//		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h + x1 - 1);
+//		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h);
 		return vert;
 	}
 }
@@ -152,10 +171,10 @@ class AN extends Production {
 
 	Vertex apply(Vertex vert) {
 //		System.out.println("AN");
-		vert.m_a[1][1] = h/3;
-		vert.m_a[2][1] = h/6;
-		vert.m_a[1][2] = h/6;
-		vert.m_a[2][2] = h/3;
+        vert.m_a[1][1] = h/3 + dt * beta / h;
+        vert.m_a[2][1] = h/6 - dt * beta / h;
+        vert.m_a[1][2] = h/6 - dt * beta / h;
+        vert.m_a[2][2] = h/3 + dt * beta * (1/h + 1);
 		
         vert.m_x_old[0] = vert.m_x[0];
         vert.m_x_old[1] = vert.m_x[1];
@@ -163,9 +182,17 @@ class AN extends Production {
         
         double x1 = vert.m_x_old[1];
         double x2 = vert.m_x_old[2];
+        
+        double m11 = h/3 - dt * alpha / h;
+        double m12 = h/6 + dt * alpha / h;
+        double m21 = h/6 + dt * alpha / h;
+        double m22 = h/3 - dt * alpha * (1/h + 1);
+        
+        vert.m_b[1] = x1 * m11 + x2 * m12;
+        vert.m_b[2] = x1 * m21 + x2 * m22 - dt;
 		
-		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h);
-		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h + x2 + 1);
+//		vert.m_b[1] = x1 * h/3 + x2 * h/6 - dt * (  x1/h - x2/h);
+//		vert.m_b[2] = x1 * h/6 + x2 * h/3 - dt * (- x1/h + x2/h + x2 + 1);
 		return vert;
 	}
 }
