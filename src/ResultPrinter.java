@@ -17,6 +17,7 @@ public class ResultPrinter {
         frame.add(plot);
         frame.pack();
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public static void printResult(List<Double> result) {
