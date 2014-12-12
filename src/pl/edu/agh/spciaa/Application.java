@@ -13,22 +13,20 @@ public class Application {
     
     private void run() {
         Node root = makeTree(conf.height);
+        Tree tree = new Tree(root);
+        
+        
         
         executor.shutdown();
     }
     
     private Node makeTree(int height) {
-        Node root = new Node(null, 2, 3 * conf.p);
-        
-        executor.beginStage(1);
-        Production proot = new PRoot(root, conf);
-        executor.submit(proot);
-        executor.endStage();
+        Node root = makeRoot();
+        -- height;
         
         Queue<Node> pending = new LinkedList<>();
         pending.add(root);
         
-        -- height;
         while (!pending.isEmpty()) {
             -- height;
             
@@ -57,6 +55,16 @@ public class Application {
             }
             executor.endStage();
         }
+        return root;
+    }
+
+    private Node makeRoot() {
+        Node root = new Node(null, 2, 3 * conf.p);
+        
+        executor.beginStage(1);
+        Production proot = new PRoot(root, conf);
+        executor.submit(proot);
+        executor.endStage();
         
         return root;
     }
