@@ -132,14 +132,6 @@ public class Matrix {
         return a;
     }
     
-    public static void inv(double[][] A) {
-        if (A.length != A[0].length) {
-            throw new IllegalArgumentException("Non-square matrix");
-        }
-        int N = A.length;
-        
-    }
-    
     private static int[] makePivot(int n) {
         int[] p = new int[n];
         for (int i = 0; i < n; ++ i) {
@@ -176,7 +168,7 @@ public class Matrix {
         return c;
     }
     
-    public static double[] sovle(double[][] A, double[] x) {
+    public static double[] solve(double[][] A, double[] x) {
         if (A.length != A[0].length || A.length != x.length) {
             throw new IllegalArgumentException("Incompatible dimensions");
         }
@@ -241,4 +233,16 @@ public class Matrix {
         }
     }
 
+    public static void substitute(double[][] A, double[] b, double[] x, int p) {
+        int N = A.length;
+        for (int i = 0; i < p; ++ i) {
+            for (int j = p; j < N; ++ j) {
+                b[i] -= A[i][j] * x[j - p];
+            }
+        }
+        for (int i = p; i < N; ++ i) {
+            b[i] = x[i - p];
+        }
+    }
+    
 }
