@@ -54,4 +54,17 @@ public class Tree {
     public Node root() {
         return level(0).get(0);
     }
+    
+    public List<Double> getSolution() {
+        List<Double> solution = new ArrayList<>();
+        for (Node leaf: leaves()) {
+            solution.add(leaf.x[0]);
+        }
+        Node last = lastLeaf();
+        for (int i = 1; i < last.size; ++ i) {
+            solution.add(last.x[i]);
+        }
+        return solution;
+    }
+    
 }
