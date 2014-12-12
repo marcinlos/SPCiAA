@@ -245,4 +245,42 @@ public class Matrix {
         }
     }
     
+    public static void shiftToTop(double[] b, int from, int p) {
+        for (int i = 0; i < p; ++ i) {
+            double tmp = b[from + i];
+            for (int j = from + i - 1; j >= i; -- j) {
+                b[j + 1] = b[j];
+            }
+            b[i] = tmp;
+        }
+    }
+    
+    public static void shiftRowsToTop(double[][] A, int from, int p) {
+        for (int i = 0; i < p; ++ i) {
+            double[] row = A[from + i];
+            for (int j = from + i - 1; j >= i; -- j) {
+                A[j + 1] = A[j];
+            }
+            A[i] = row;
+        }
+    }
+    
+    public static void shiftColsToLeft(double[][] A, int from, int p) {
+        int N = A[0].length;
+        int M = A.length;
+        double[] tmp = new double[N];
+        for (int i = 0; i < p; ++ i) {
+            for (int j = 0; j < M; ++ j) {
+                tmp[j] = A[j][from + i];
+            }
+            for (int j = from + i - 1; j >= i; -- j) {
+                for (int k = 0; k < M; ++ k) {
+                    A[k][j + 1] = A[k][j];
+                }
+            }
+            for (int j = 0; j < M; ++ j) {
+                A[j][i] = tmp[j];
+            }
+        }
+    }
 }
