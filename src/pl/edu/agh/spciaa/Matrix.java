@@ -213,5 +213,32 @@ public class Matrix {
         
         return b;
     }
+    
+    public static void partiallyEliminate(double[][] A, double[] b, int p) {
+        int N = A.length;
+        for (int i = 0; i < p; ++ i) {
+            double v = A[i][i];
+            for (int j = i; j < N; ++ j) {
+                A[i][j] /= v;
+            }
+            b[i] /= v;
+            for (int j = i + 1; j < N; ++ j) {
+                double x = A[j][i];
+                for (int k = i; k < N; ++ k) {
+                    A[j][k] -= x * A[i][k];
+                }
+                b[j] -= x * b[i];
+            }
+        }
+        for (int i = p - 1; i > 0; -- i) {
+            for (int j = i - 1; j >= 0; -- j) {
+                double v = A[j][i];
+                for (int k = i; k < N; ++ k) {
+                    A[j][k] -= v * A[i][k];
+                }
+                b[j] -= v * b[i];
+            }
+        }
+    }
 
 }
