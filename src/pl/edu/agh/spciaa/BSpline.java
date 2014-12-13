@@ -7,12 +7,18 @@ public class BSpline {
     public final int p;
     
     public BSpline(double[] knot, double[] a, int p) {
-        if (a.length != knot.length - p - 1) {
-            throw new IllegalArgumentException("# of DOF does not match knot size");
-        }
+        checkDOF(knot, a, p);
         this.knot = knot;
         this.a = a;
         this.p = p;
+    }
+    
+    private static void checkDOF(double[] knot, double[] a, int p) {
+        int dof = knot.length - p - 1;
+        if (a.length != dof) {
+            String msg = String.format("DOF: %d, expected %d", a.length, dof);
+            throw new IllegalArgumentException(msg);
+        }
     }
     
     private int dof() {
