@@ -245,8 +245,8 @@ public class Matrix {
         }
     }
     
-    public static void shiftToTop(double[] b, int from, int p) {
-        for (int i = 0; i < p; ++ i) {
+    public static void shiftToTop(double[] b, int from, int count) {
+        for (int i = 0; i < count; ++ i) {
             double tmp = b[from + i];
             for (int j = from + i - 1; j >= i; -- j) {
                 b[j + 1] = b[j];
@@ -255,8 +255,8 @@ public class Matrix {
         }
     }
     
-    public static void shiftRowsToTop(double[][] A, int from, int p) {
-        for (int i = 0; i < p; ++ i) {
+    public static void shiftRowsToTop(double[][] A, int from, int count) {
+        for (int i = 0; i < count; ++ i) {
             double[] row = A[from + i];
             for (int j = from + i - 1; j >= i; -- j) {
                 A[j + 1] = A[j];
@@ -265,11 +265,11 @@ public class Matrix {
         }
     }
     
-    public static void shiftColsToLeft(double[][] A, int from, int p) {
+    public static void shiftColsToLeft(double[][] A, int from, int count) {
         int N = A[0].length;
         int M = A.length;
         double[] tmp = new double[N];
-        for (int i = 0; i < p; ++ i) {
+        for (int i = 0; i < count; ++ i) {
             for (int j = 0; j < M; ++ j) {
                 tmp[j] = A[j][from + i];
             }

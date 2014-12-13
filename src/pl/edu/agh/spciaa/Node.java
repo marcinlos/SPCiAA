@@ -1,5 +1,7 @@
 package pl.edu.agh.spciaa;
 
+import java.util.Arrays;
+
 
 public class Node {
 
@@ -39,5 +41,12 @@ public class Node {
     
     public void saveOld() {
         System.arraycopy(x, 0, xPrev, 0, x.length);
+    }
+    
+    public void clear() {
+        for (double[] row: A) {
+            Arrays.fill(row, 0);
+        }
+        Arrays.fill(b, 0);
     }
 }

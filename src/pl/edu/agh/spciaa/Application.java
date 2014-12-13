@@ -16,9 +16,203 @@ public class Application {
         Node root = makeTree(conf.height);
         Tree tree = new Tree(root);
         
-        
+        prepare(tree);
+        step(tree);
         
         executor.shutdown();
+    }
+    
+    private void test() {
+        int N = 10;
+        double[][] A = Matrix.rand(N, N);
+        double[] b = Matrix.rand(N);
+        
+        Pretty.printMatrix(A);
+        System.out.println("b = ");
+        System.out.println(Pretty.formatRow(b));
+        System.out.println();
+
+        double[][] A2 = Matrix.copy(A);
+        double[] b2 = Matrix.copy(b);
+        
+        
+        int p = 5;
+        Matrix.partiallyEliminate(A, b, p);
+        System.out.println("After partial elimination:");
+        Pretty.printMatrix(A);
+        System.out.println("b = ");
+        System.out.println(Pretty.formatRow(b));
+        System.out.println();
+        
+        double[][] AL = new double[N - p][N - p];
+        double[] bL = new double[N - p];
+        for (int i = p; i < N; ++ i) {
+            for (int j = p; j < N; ++ j) {
+                AL[i - p][j - p] = A[i][j];
+            }
+            bL[i - p] = b[i];
+        }
+        double[] xL = Matrix.solve(AL, bL);
+        Matrix.substitute(A, b, xL, p);
+        double[] c = Matrix.mult(A2, b);
+        
+        
+        double[] xx = Matrix.solve(Matrix.copy(A2), b2);
+        double[] cc = Matrix.mult(A2, xx);
+
+        System.out.println("Ax = ");
+        System.out.println(Pretty.formatRow(cc));
+        System.out.println(Pretty.formatRow(c));
+        System.out.println(Pretty.formatRow(b2));
+        System.out.println();
+        
+        
+        A = new double[N][N];
+        for (int i = 0; i < N; ++ i) {
+            for (int j = 0; j < N; ++ j) {
+                A[i][j] = (10 * i + j) / 100.0;
+            }
+        }
+        System.out.println("A =");
+        Pretty.printMatrix(A);
+        
+        Matrix.shiftRowsToTop(A, 3, 2);
+        Matrix.shiftColsToLeft(A, 3, 2);
+        System.out.println("A' =");
+        Pretty.printMatrix(A);
+    }
+    
+    private void prepare(Tree tree) {
+        int nelem = tree.leafCount();
+        
+        executor.beginStage(nelem);
+        for (Node node: tree.leaves()) {
+            Production p = new A(node, conf);
+            executor.submit(p);
+        }
+        executor.endStage();
+        
+        System.out.println("Leaves:");
+        for (Node node: tree.leaves()) {
+            System.out.println(Pretty.formatNode(node));
+        }
+        
+        int N = conf.nelem + conf.p;
+        double[][] A = new double[N][N];
+        double[] b = new double[N];
+        
+        for (int i = 0; i < conf.nelem; ++ i) {
+            Node node = tree.leaves().get(i);
+            
+            for (int j = 0; j < node.size; ++ j) {
+                for (int k = 0; k < node.size; ++ k) {
+                    A[i + j][i + k] += node.A[j][k];
+                }
+                b[i + j] += node.b[j];
+            }
+        }
+        
+        System.out.println("Full matrix:");
+        System.out.println(Pretty.formatSystem(A, b));
+        
+        double[] x = Matrix.solve(A, b);
+        System.out.println("Solution:");
+        System.out.println(Pretty.formatRow(x));
+    }
+    
+    private void step(Tree tree) {
+        int height = tree.height();
+        for (int i = height - 2; i >= 0; -- i) {
+            executor.beginStage(tree.levelSize(i));
+            
+            for (Node node: tree.level(i)) {
+                int gap;
+                int skip;
+                if (i == height - 2) {
+                    gap = 1;
+                    skip = 0;
+                } else if (i == height - 3) {
+                    gap = conf.p;
+                    skip = 1;
+                } else {
+                    gap = conf.p;
+                    skip = conf.p;
+                }
+                Production pc = new PCombineChildren(node, conf, gap, skip);
+                executor.submit(pc);
+            }
+            executor.endStage();
+            
+            if (i > 0) {
+                executor.beginStage(tree.levelSize(i));
+            
+                for (Node node: tree.level(i)) {
+                    int gap;
+                    if (i == height - 2) {
+                        gap = 1;
+                    } else {
+                        gap = conf.p;
+                    }
+                    Production pElim = new PEliminate(node, conf, gap);
+                    executor.submit(pElim);
+                }
+                executor.endStage();
+            }
+            
+            System.out.println("Level " + i);
+            for (Node node: tree.level(i)) {
+                System.out.println(Pretty.formatNode(node));
+            }
+        }
+        {
+            executor.beginStage(1);
+            Production p = new PSolveRoot(tree.root(), conf);
+            executor.submit(p);
+            executor.endStage();
+        }
+        System.out.println("Solved root:");
+        System.out.println(Pretty.formatNode(tree.root()));
+        
+        for (int i = 0; i < height - 1; ++ i) {
+            executor.beginStage(tree.levelSize(i));
+            
+            for (int j = 0; j < tree.levelSize(i); ++ j) {
+                Node node = tree.level(i).get(j);
+                int gap;
+                int skip;
+                if (i == height - 2) {
+                    gap = 1;
+                    skip = 0;
+                } else if (i == height - 3) {
+                    gap = conf.p;
+                    skip = 1;
+                } else {
+                    gap = conf.p;
+                    skip = conf.p;
+                }
+                Production p = new PBackwardSubstitution(node, conf, gap, skip);
+                executor.submit(p);
+            }
+            executor.endStage();
+            
+            System.out.println("Level " + i);
+            for (Node node: tree.level(i)) {
+                System.out.println(Pretty.formatNode(node));
+            }
+        }
+        System.out.println("In leaves:");
+        for (Node node: tree.leaves()) {
+            System.out.println(Pretty.formatNode(node));
+        }
+        
+        List<Double> solution = tree.getSolution();
+        double[] x = new double[solution.size()];
+        for (int i = 0; i < solution.size(); ++ i) {
+            x[i] = solution.get(i);
+        }
+        
+        System.out.println("Solution:");
+        System.out.println(Pretty.formatRow(x));
     }
     
     private Node makeTree(int height) {
@@ -192,8 +386,7 @@ public class Application {
 
     public static void main(String[] args) {
         Application app = new Application();
-//        app.run();
-        app.testRand();
+        app.run();
     }
 
 }

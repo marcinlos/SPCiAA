@@ -12,11 +12,14 @@ public class Pretty {
         return sb.toString();
     }
     
+    private static String str(double x) {
+        return String.format("%6.2f", x);
+    }
+    
     public static String formatRow(double[] x) {
         StringBuilder sb = new StringBuilder();
         for (double v: x) {
-            String s = String.format("%5.2f ", v);
-            sb.append(s);
+            sb.append(str(v) + ' ');
         }
         return sb.toString();
     }
@@ -36,10 +39,26 @@ public class Pretty {
             double b = node.b[i];
             
             sb.append(formatRow(row));
-            sb.append(" |  ");
-            sb.append(x);
-            sb.append("      ");
-            sb.append(b);
+            sb.append(" | ");
+            sb.append(str(x));
+            sb.append("     ");
+            sb.append(str(b));
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+    
+    public static String formatSystem(double[][] A, double[] b) {
+        StringBuilder sb = new StringBuilder();
+        
+        int N = A.length;
+        for (int i = 0; i < N; ++ i) {
+            double[] row = A[i];
+            double x = b[i];
+            
+            sb.append(formatRow(row));
+            sb.append(" | ");
+            sb.append(str(x));
             sb.append('\n');
         }
         return sb.toString();
