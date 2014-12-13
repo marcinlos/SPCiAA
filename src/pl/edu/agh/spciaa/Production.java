@@ -43,8 +43,9 @@ class PRoot extends Production {
     protected void apply() {
         node.setType(Node.Type.ROOT);
         int size = 3 * conf.p;
-        node.children[0] = new Node(node, 2, size);
-        node.children[1] = new Node(node, 2, size);
+        Element[] es = node.elem.split(2);
+        node.children[0] = new Node(node, es[0], 2, size);
+        node.children[1] = new Node(node, es[1], 2, size);
     }
 }
 
@@ -58,8 +59,9 @@ class PInner extends Production {
     protected void apply() {
         node.setType(Node.Type.INTERNAL);
         int size = 3 * conf.p;
-        node.children[0] = new Node(node, 2, size);
-        node.children[1] = new Node(node, 2, size);
+        Element[] es = node.elem.split(2);
+        node.children[0] = new Node(node, es[0], 2, size);
+        node.children[1] = new Node(node, es[1], 2, size);
     }
 }
 
@@ -72,8 +74,11 @@ class PLeafParent extends Production {
     @Override
     protected void apply() {
         node.setType(Node.Type.LEAF_PARENT);
+        
+        Element[] es = node.elem.split(conf.p + 1);
+        
         for (int i = 0; i < conf.p + 1; ++ i) {
-            node.children[i] = new Node(node, 0, conf.p + 1);
+            node.children[i] = new Node(node, es[i], 0, conf.p + 1);
         }
         System.out.println("After leaf parent");
     }
@@ -88,8 +93,9 @@ class PParentOfLeafParent extends Production {
     @Override
     protected void apply() {
         node.setType(Node.Type.INTERNAL);
-        node.children[0] = new Node(node, conf.p + 1, 2 * conf.p + 1);
-        node.children[1] = new Node(node, conf.p + 1, 2 * conf.p + 1);
+        Element[] es = node.elem.split(2);
+        node.children[0] = new Node(node, es[0], conf.p + 1, 2 * conf.p + 1);
+        node.children[1] = new Node(node, es[1], conf.p + 1, 2 * conf.p + 1);
     }
 }
 

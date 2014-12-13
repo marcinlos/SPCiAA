@@ -13,6 +13,8 @@ public class Node {
     public final Node parent;
     public Node[] children;
     public int size;
+    
+    public final Element elem;
 
     public final double[][] A;
     public final double[] b;
@@ -20,8 +22,9 @@ public class Node {
     public final double[] xPrev;
 
     
-    public Node(Node parent, int children, int size) {
+    public Node(Node parent, Element elem, int children, int size) {
         this.parent = parent;
+        this.elem = elem;
         this.children = new Node[children];
         this.size = size;
 

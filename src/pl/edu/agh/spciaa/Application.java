@@ -36,11 +36,11 @@ public class Application {
             System.out.println(Pretty.formatNode(node));
         }
         
-        int N = conf.nelem + conf.p;
+        int N = tree.leafCount() + conf.p;
         double[][] A = new double[N][N];
         double[] b = new double[N];
         
-        for (int i = 0; i < conf.nelem; ++ i) {
+        for (int i = 0; i < tree.leafCount(); ++ i) {
             Node node = tree.leaves().get(i);
             
             for (int j = 0; j < node.size; ++ j) {
@@ -193,7 +193,7 @@ public class Application {
     }
     
     private Node makeRoot() {
-        Node root = new Node(null, 2, 3 * conf.p);
+        Node root = new Node(null, new Element(0, 1), 2, 3 * conf.p);
         
         executor.beginStage(1);
         Production proot = new PRoot(root, conf);
