@@ -55,16 +55,22 @@ public class Tree {
         return level(0).get(0);
     }
     
-    public List<Double> getSolution() {
-        List<Double> solution = new ArrayList<>();
-        for (Node leaf: leaves()) {
-            solution.add(leaf.x[0]);
-        }
+    public double[] getSolution() {
         Node last = lastLeaf();
-        for (int i = 1; i < last.size; ++ i) {
-            solution.add(last.x[i]);
+        int elems = leafCount();
+        int p = last.size - 1;
+        
+        double[] x = new double[elems + p];
+        
+        int idx = 0;
+        for (Node leaf: leaves()) {
+            x[idx ++] = leaf.x[0];
         }
-        return solution;
+        
+        for (int i = 1; i <= p; ++ i) {
+            x[idx ++] = last.x[i];
+        }
+        return x;
     }
     
 }

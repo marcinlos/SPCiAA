@@ -9,7 +9,7 @@ import java.util.Queue;
 public class Application {
     
     private final Executor executor = new Executor();
-    private final Conf conf = new Conf();
+    private final Conf conf = new Conf(6, 0.0001, 3);
     
     private void run() {
         Node root = makeTree(conf.height);
@@ -60,6 +60,20 @@ public class Application {
     }
     
     private void step(Tree tree) {
+        
+        combineAndEliminate(tree);
+        solveRoot(tree);
+        backwardSubstitution(tree);
+        
+        System.out.println("In leaves:");
+        for (Node node: tree.leaves()) {
+            System.out.println(Pretty.formatNode(node));
+        }
+        
+        plotSolution(tree);
+    }
+
+    private void combineAndEliminate(Tree tree) {
         int height = tree.height();
         for (int i = height - 2; i >= 0; -- i) {
             executor.beginStage(tree.levelSize(i));
@@ -103,15 +117,20 @@ public class Application {
                 System.out.println(Pretty.formatNode(node));
             }
         }
-        {
-            executor.beginStage(1);
-            Production p = new PSolveRoot(tree.root(), conf);
-            executor.submit(p);
-            executor.endStage();
-        }
+    }
+
+    private void solveRoot(Tree tree) {
+        executor.beginStage(1);
+        Production p = new PSolveRoot(tree.root(), conf);
+        executor.submit(p);
+        executor.endStage();
+        
         System.out.println("Solved root:");
         System.out.println(Pretty.formatNode(tree.root()));
-        
+    }
+
+    private void backwardSubstitution(Tree tree) {
+        int height = tree.height();
         for (int i = 0; i < height - 1; ++ i) {
             executor.beginStage(tree.levelSize(i));
             
@@ -139,19 +158,29 @@ public class Application {
                 System.out.println(Pretty.formatNode(node));
             }
         }
-        System.out.println("In leaves:");
-        for (Node node: tree.leaves()) {
-            System.out.println(Pretty.formatNode(node));
-        }
-        
-        List<Double> solution = tree.getSolution();
-        double[] x = new double[solution.size()];
-        for (int i = 0; i < solution.size(); ++ i) {
-            x[i] = solution.get(i);
-        }
+    }
+
+    
+    private void plotSolution(Tree tree) {
+        double[] x = tree.getSolution();
         
         System.out.println("Solution:");
         System.out.println(Pretty.formatRow(x));
+
+        double[] knot = conf.knot;
+        
+        BSpline s = new BSpline(knot, x, conf.p);
+        
+        int N = 400;
+        double[] xs = new double[N + 1];
+        double[] ys = new double[N + 1];
+        for (int i = 0; i <= N; ++ i) {
+            xs[i] = i / (double) N;
+            ys[i] = s.eval(xs[i]);
+        }
+        
+        PlotFrame plt = PlotFrame.instance();
+        plt.plot(xs, ys);
     }
     
     private Node makeTree(int height) {

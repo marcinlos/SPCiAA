@@ -54,5 +54,54 @@ public class BSpline {
         
         return A[p][p];
     }
+    
+    public static double[] makeKnot(int elems, int p) {
+        int n = elems + 2 * p + 1;
+        double[] knot = new double[n];
+        
+        int idx = 0;
+        for (int i = 0; i < p; ++ i) {
+            knot[idx ++] = 0;
+        }
+        
+        for (int i = 0; i < elems + 1; ++ i) {
+            knot[idx ++] = i / (double) elems;
+        }
+        
+        for (int i = 0; i < p; ++ i) {
+            knot[idx ++] = 1;
+        }
+        return knot;
+    }
 
+    
+    public static void main(String[] args) {
+        int p = 2;
+        int elems = 10;
+        int dof = elems + p;
+        double[] u = makeKnot(elems, p);
+        double[] a = new double[dof];
+        BSpline s = new BSpline(u, a, p);
+        
+        PlotFrame plt = PlotFrame.instance();
+        int N = 200;
+        
+        double[] xs = new double[N + 1];
+        double[] ys = new double[N + 1];
+        
+        for (int k = 0; k < dof; ++ k) {
+        
+            a[k] = 1;
+            
+            for (int i = 0; i <= N; ++ i) {
+                double x = i / (double) N;
+                xs[i] = x;
+                ys[i] = s.eval(x);
+            }
+            
+            a[k] = 0;
+            
+            plt.plot(xs, ys);
+        }
+    }
 }
