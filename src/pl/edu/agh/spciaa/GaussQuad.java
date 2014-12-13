@@ -7,6 +7,11 @@ public class GaussQuad {
         return GaussQuadTable.POINTS[n];
     }
     
+    public static double[] weights(int n) {
+        checkOrder(n);
+        return GaussQuadTable.WEIGHTS[n];
+    }
+    
     public static double eval(double[] vals) {
         int n = vals.length;
         checkOrder(n);

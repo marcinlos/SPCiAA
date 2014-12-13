@@ -12,8 +12,15 @@ public class Conf {
         this.dt = dt;
         this.p = p;
         
-        int elems = (int) Math.round(Math.pow(2, height - 2)) * (p + 1);
-        knot = BSpline.makeKnot(elems, p);
+        knot = Basis.makeKnot(elems(), p);
+    }
+
+    public int elems() {
+        return (int) Math.round(Math.pow(2, height - 2)) * (p + 1);   
+    }
+    
+    public int dof() {
+        return elems() + p;
     }
     
 }

@@ -1,6 +1,5 @@
 package pl.edu.agh.spciaa;
 
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 public abstract class Production implements Runnable {
@@ -120,12 +119,32 @@ class A extends Production {
 
     @Override
     protected void apply() {
-        Random rand = new Random();
-        for (int i = 0; i < node.size; ++ i) {
-            for (int j = 0; j < node.size; ++ j) {
-                node.A[i][j] = rand.nextDouble();
+        
+        int dof = node.elem.start;
+        double e0 = node.elem.a;
+        double e1 = node.elem.b;
+        
+        Basis knot = new Basis(conf.knot, conf.p);
+        
+        double[] g = GaussQuad.points(conf.p + 1);
+        double[] w = GaussQuad.weights(conf.p + 1);
+        double h = 0.5 * node.elem.h();
+        
+        for (int k = 0; k <= conf.p; ++ k) {
+            double t = 0.5 * (g[k] + 1);
+            double x = (1 - t) * e0 + t * e1;
+            
+            for (int i = 0; i < node.size; ++ i) {
+                double va = knot.evalOne(x, dof + i);
+                
+                for (int j = 0; j < node.size; ++ j) {
+                    double vb = knot.evalOne(x, dof + j);
+                    
+                    node.A[i][j] += h * va * vb * w[k];
+                }
+                double fv = Math.sin(20 * x * x);
+                node.b[i] += h * va * fv * w[k];
             }
-            node.b[i] = rand.nextDouble();
         }
     }
 }

@@ -9,7 +9,7 @@ import java.util.Queue;
 public class Application {
     
     private final Executor executor = new Executor();
-    private final Conf conf = new Conf(6, 0.0001, 3);
+    private final Conf conf = new Conf(5, 0.0001, 3);
     
     private void run() {
         Node root = makeTree(conf.height);
@@ -167,16 +167,14 @@ public class Application {
         System.out.println("Solution:");
         System.out.println(Pretty.formatRow(x));
 
-        double[] knot = conf.knot;
-        
-        BSpline s = new BSpline(knot, x, conf.p);
+        Basis s = new Basis(conf.knot, conf.p);
         
         int N = 400;
         double[] xs = new double[N + 1];
         double[] ys = new double[N + 1];
         for (int i = 0; i <= N; ++ i) {
             xs[i] = i / (double) N;
-            ys[i] = s.eval(xs[i]);
+            ys[i] = s.eval(xs[i], x);
         }
         
         PlotFrame plt = PlotFrame.instance();
@@ -222,7 +220,8 @@ public class Application {
     }
     
     private Node makeRoot() {
-        Node root = new Node(null, new Element(0, 1), 2, 3 * conf.p);
+        Element domain = new Element(0.0, 1.0, 0, conf.elems());
+        Node root = new Node(null, domain, 2, 3 * conf.p);
         
         executor.beginStage(1);
         Production proot = new PRoot(root, conf);
