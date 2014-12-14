@@ -154,12 +154,6 @@ public class Matrix {
         x[j] = tmp;
     }
     
-    private static void swap(int[] x, int i, int j) {
-        int tmp = x[i];
-        x[i] = x[j];
-        x[j] = tmp;
-    }
-    
     private static int maxAbsVal(double[][] A, int col) {
         int c = col;
         for (int i = col + 1; i < A.length; ++ i) {
@@ -177,12 +171,10 @@ public class Matrix {
         int N = x.length;
         
         double[] b = copy(x);
-        int[] piv = makePivot(N);
         
         for (int i = 0; i < N; ++ i) {
             int c = maxAbsVal(A, i);
             swap(A, i, c);
-            swap(piv, i, c);
             swap(b, i, c);
             double v = A[i][i];
             for (int j = i; j < N; ++ j) {
