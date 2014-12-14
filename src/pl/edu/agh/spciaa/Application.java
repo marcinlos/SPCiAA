@@ -173,7 +173,7 @@ public class Application {
         
         double[] xs = Matrix.linspace(0, 1, N);
         double[] ys = new double[N + 1];
-        s.eval(xs, x, 0, ys);
+        s.eval(xs, x, ys);
         
         PlotFrame plt = PlotFrame.instance();
         plt.plot(xs, ys);

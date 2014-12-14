@@ -99,6 +99,10 @@ public class Basis {
         return eval(x, a, 0);
     }
     
+    public void eval(double[] xs, double[] a, double[] ys) {
+        eval(xs, a, 0, ys);
+    }
+    
     private double deBoor(double x, double[][] A, int e) {
         for (int i = 1; i <= p; ++ i) {
             for (int j = i; j <= p; ++ j) {
