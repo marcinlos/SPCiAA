@@ -11,6 +11,8 @@ public class Executor {
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     
     private CountDownLatch barrier;
+    
+    private final Runnable decrementBarrier = () -> { barrier.countDown(); };
 
     public CountDownLatch beginStage(int productions) {
         if (barrier != null) {
@@ -22,7 +24,7 @@ public class Executor {
     
     public void submit(Production task) {
         checkStage();
-        task.setBarrier(barrier);
+        task.doAfterAction(decrementBarrier);
         executor.submit(task);
     }
     

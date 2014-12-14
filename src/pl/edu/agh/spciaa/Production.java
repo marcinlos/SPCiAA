@@ -1,20 +1,19 @@
 package pl.edu.agh.spciaa;
 
-import java.util.concurrent.CountDownLatch;
 
 public abstract class Production implements Runnable {
 
     public final Node node;
     protected final Conf conf;
-    private CountDownLatch barrier;
+    private Runnable afterAction;
     
     public Production(Node node, Conf conf) {
         this.node = node;
         this.conf = conf;
     }
     
-    public void setBarrier(CountDownLatch barrier) {
-        this.barrier = barrier;
+    public void doAfterAction(Runnable handler) {
+        this.afterAction = handler;
     }
     
     protected abstract void apply();
@@ -27,7 +26,7 @@ public abstract class Production implements Runnable {
         } catch (Exception e) {
             e.printStackTrace(System.err);
         } finally {
-            barrier.countDown();
+            afterAction.run();
         }
     }
 }
