@@ -132,12 +132,14 @@ public class Matrix {
         return a;
     }
     
-    private static int[] makePivot(int n) {
-        int[] p = new int[n];
-        for (int i = 0; i < n; ++ i) {
-            p[i] = i;
+    public static double[] linspace(double a, double b, int n) {
+        double[] x = new double[n + 1];
+        
+        for (int i = 0; i <= n; ++ i) {
+            double t = i / (double) n;
+            x[i] = (1 - t) * a + t * b;
         }
-        return p;
+        return x;
     }
     
     private static <T> void swap(T[] x, int i, int j) {
