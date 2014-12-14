@@ -170,12 +170,10 @@ public class Application {
         Basis s = new Basis(conf.knot, conf.p);
         
         int N = 400;
-        double[] xs = new double[N + 1];
+        
+        double[] xs = Matrix.linspace(0, 1, N);
         double[] ys = new double[N + 1];
-        for (int i = 0; i <= N; ++ i) {
-            xs[i] = i / (double) N;
-            ys[i] = s.eval(xs[i], x);
-        }
+        s.eval(xs, x, 0, ys);
         
         PlotFrame plt = PlotFrame.instance();
         plt.plot(xs, ys);
