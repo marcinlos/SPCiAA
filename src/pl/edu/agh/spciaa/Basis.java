@@ -15,83 +15,109 @@ public class Basis {
         return u.length;
     }
     
-    public int dof() {
+    public int DOF() {
         return size() - p - 1;
     }
     
-    public int findElement(double x) {
+    /**
+     * Calculate index of last DOF that affects element containing x. To ensure
+     * uniqueness, elements are taken to be of (a, b] type, except for 
+     * endpoints.
+     * 
+     * [a, b] (b, c] (c, d] ... (x, y] (y, z]
+     */
+    public int findLastDOF(double x) {
         int i = 0;
-        while (i < dof() && u[i] <= x) {
+        while (i < DOF() && u[i] <= x) {
             ++ i;
         }
         return i - 1;
     }
     
-    private void fillBaseRow(double[][] A, double[] a, int e, int offset) {
+    public int findFirstDOF(double x) {
+        return findLastDOF(x) - p;
+    }
+    
+    private void fillBaseRow(double[][] A, double[] a, int firstDOF, int offset) {
         for (int i = 0; i <= p; ++ i) {
-            int idx = e - p + i;
-            if (idx >= offset && idx - offset < a.length) {
-                A[0][i] = a[idx - offset];
+            int dof = firstDOF + i;
+            if (dof >= offset && dof < offset + a.length) {
+                A[0][i] = a[dof - offset];
             } else {
                 A[0][i] = 0;
             }
         }
     }
     
-    public double evalOne(double x, int dof) {
-        int e = findElement(x);
+    /**
+     * Evaluate single basis spline at specified point.
+     * 
+     * @param x Point to evaluate at
+     * @param dof Index of basis function
+     */
+    public double evalBasisSpline(double x, int dof) {
+        int firstDOF = findFirstDOF(x);
+        int lastDOF = firstDOF + p;
         
-        if (e < dof || e > dof + p) {
+        if (dof > lastDOF || dof < firstDOF) {
             return 0;
         }
         
         double[][] A = new double[p + 1][p + 1];
-        A[0][dof - e + p] = 1;
+        A[0][dof - firstDOF] = 1;
         
-        return deBoor(x, A, e);
+        return deBoor(x, A, firstDOF);
     }
     
-    public void evalOne(double[] xs, int dof, double[] ys) {
+    /**
+     * Evaluate single basis spline at specified points.
+     * 
+     * @param xs Points to evaluate at
+     * @param dof Index of basis function
+     */
+    public void evalBasisSpline(double[] xs, int dof, double[] ys) {
         double[][] A = new double[p + 1][p + 1];
         
         for (int i = 0; i < xs.length; ++ i) {
             double x = xs[i];
             
-            int e = findElement(x);
+            int firstDOF = findFirstDOF(x);
+            int lastDOF = firstDOF + p;
             
-            if (e < dof || e > dof + p) {
+            if (dof > lastDOF || dof < firstDOF) {
                 ys[i] = 0;
                 continue;
             }
             
-            A[0][dof - e + p] = 1;
-            ys[i] = deBoor(x, A, e);
-            A[0][dof - e + p] = 0;
+            A[0][dof - firstDOF] = 1;
+            ys[i] = deBoor(x, A, firstDOF);
+            A[0][dof - firstDOF] = 0;
         }
     }
     
     public double eval(double x, double[] a, int offset) {
-        int e = findElement(x);
+        int firstDOF = findFirstDOF(x);
+
         double[][] A = new double[p + 1][p + 1];
-        fillBaseRow(A, a, e, offset);
+        fillBaseRow(A, a, firstDOF, offset);
         
-        return deBoor(x, A, e);
+        return deBoor(x, A, firstDOF);
     }
     
     public void eval(double[] xs, double[] a, int offset, double[] ys) {
         double[][] A = new double[p + 1][p + 1];
-        int e = -1;
+        int firstDOF = -1;
         
         for (int i = 0; i < xs.length; ++ i) {
             double x = xs[i];
             
-            int e2 = findElement(x);
-            if (e2 != e) {
-                e = e2;
-                fillBaseRow(A, a, e, offset);
+            int d = findFirstDOF(x);
+            if (d != firstDOF) {
+                firstDOF = d;
+                fillBaseRow(A, a, firstDOF, offset);
             }
             
-            ys[i] = deBoor(x, A, e);
+            ys[i] = deBoor(x, A, firstDOF);
         }
     }
     
@@ -103,12 +129,12 @@ public class Basis {
         eval(xs, a, 0, ys);
     }
     
-    private double deBoor(double x, double[][] A, int e) {
+    private double deBoor(double x, double[][] A, int firstDOF) {
         for (int i = 1; i <= p; ++ i) {
             for (int j = i; j <= p; ++ j) {
-                int m = e - p + j;
-                double un = u[m + p - i + 1];
-                double up = u[m];
+                int k = firstDOF + j;
+                double un = u[k + p - i + 1];
+                double up = u[k];
                 double t = un != up ? (x - up) / (un - up) : 0;
                 A[i][j] = t * A[i - 1][j] + (1 - t) * A[i - 1][j - 1];
             }

@@ -134,10 +134,10 @@ class A extends Production {
             double x = (1 - t) * e0 + t * e1;
             
             for (int i = 0; i < node.size; ++ i) {
-                double va = knot.evalOne(x, dof + i);
+                double va = knot.evalBasisSpline(x, dof + i);
                 
                 for (int j = 0; j < node.size; ++ j) {
-                    double vb = knot.evalOne(x, dof + j);
+                    double vb = knot.evalBasisSpline(x, dof + j);
                     
                     node.A[i][j] += h * va * vb * w[k];
                 }
