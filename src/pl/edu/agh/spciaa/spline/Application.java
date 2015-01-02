@@ -1,9 +1,15 @@
-package pl.edu.agh.spciaa;
+package pl.edu.agh.spciaa.spline;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import pl.edu.agh.spciaa.Basis;
+import pl.edu.agh.spciaa.Executor;
+import pl.edu.agh.spciaa.Matrix;
+import pl.edu.agh.spciaa.PlotFrame;
+import pl.edu.agh.spciaa.Pretty;
 
 
 public class Application {
@@ -33,7 +39,7 @@ public class Application {
         
         System.out.println("Leaves:");
         for (Node node: tree.leaves()) {
-            System.out.println(Pretty.formatNode(node));
+            System.out.println(NodeFormatter.format(node));
         }
         
         int N = tree.leafCount() + conf.p;
@@ -67,7 +73,7 @@ public class Application {
         
         System.out.println("In leaves:");
         for (Node node: tree.leaves()) {
-            System.out.println(Pretty.formatNode(node));
+            System.out.println(NodeFormatter.format(node));
         }
         
         plotSolution(tree);
@@ -114,7 +120,7 @@ public class Application {
             
             System.out.println("Level " + i);
             for (Node node: tree.level(i)) {
-                System.out.println(Pretty.formatNode(node));
+                System.out.println(NodeFormatter.format(node));
             }
         }
     }
@@ -126,7 +132,7 @@ public class Application {
         executor.endStage();
         
         System.out.println("Solved root:");
-        System.out.println(Pretty.formatNode(tree.root()));
+        System.out.println(NodeFormatter.format(tree.root()));
     }
 
     private void backwardSubstitution(Tree tree) {
@@ -155,7 +161,7 @@ public class Application {
             
             System.out.println("Level " + i);
             for (Node node: tree.level(i)) {
-                System.out.println(Pretty.formatNode(node));
+                System.out.println(NodeFormatter.format(node));
             }
         }
     }

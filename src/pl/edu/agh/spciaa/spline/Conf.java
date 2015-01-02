@@ -1,6 +1,8 @@
-package pl.edu.agh.spciaa;
+package pl.edu.agh.spciaa.spline;
 
-public class Conf {
+import pl.edu.agh.spciaa.Basis;
+
+class Conf {
 
     public final double dt;
     public final int height;

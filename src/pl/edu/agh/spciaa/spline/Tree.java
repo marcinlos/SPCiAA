@@ -1,4 +1,4 @@
-package pl.edu.agh.spciaa;
+package pl.edu.agh.spciaa.spline;
 
 import java.util.ArrayList;
 import java.util.List;

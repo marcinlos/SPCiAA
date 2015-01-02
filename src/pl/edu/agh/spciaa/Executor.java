@@ -22,7 +22,7 @@ public class Executor {
         return barrier;
     }
     
-    public void submit(Production task) {
+    public void submit(Task task) {
         checkStage();
         task.doAfterAction(decrementBarrier);
         executor.submit(task);

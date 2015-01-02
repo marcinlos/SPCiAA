@@ -1,35 +1,8 @@
-package pl.edu.agh.spciaa;
+package pl.edu.agh.spciaa.spline;
 
-
-public abstract class Production implements Runnable {
-
-    public final Node node;
-    protected final Conf conf;
-    private Runnable afterAction;
-    
-    public Production(Node node, Conf conf) {
-        this.node = node;
-        this.conf = conf;
-    }
-    
-    public void doAfterAction(Runnable handler) {
-        this.afterAction = handler;
-    }
-    
-    protected abstract void apply();
-    
-    @Override
-    public void run() {
-        System.out.println("Production: " + getClass());
-        try {
-            apply();
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        } finally {
-            afterAction.run();
-        }
-    }
-}
+import pl.edu.agh.spciaa.Basis;
+import pl.edu.agh.spciaa.GaussQuad;
+import pl.edu.agh.spciaa.Matrix;
 
 class PRoot extends Production {
 
@@ -239,4 +212,3 @@ class PBackwardSubstitution extends Production {
     }
     
 }
-

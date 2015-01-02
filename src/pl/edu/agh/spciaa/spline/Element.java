@@ -1,6 +1,6 @@
-package pl.edu.agh.spciaa;
+package pl.edu.agh.spciaa.spline;
 
-public class Element {
+class Element {
     
     public final double a;
     public final double b;
