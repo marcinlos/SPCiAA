@@ -1,12 +1,15 @@
-package pl.edu.agh.spciaa;
+package pl.edu.agh.spciaa.spline;
+
+import pl.edu.agh.spciaa.Matrix;
+import pl.edu.agh.spciaa.PlotFrame;
 
 
-public class Basis {
+public class SplineBasis {
     
     public final double[] u;
     public final int p;
     
-    public Basis(double[] u, int p) {
+    public SplineBasis(double[] u, int p) {
         this.u = u;
         this.p = p;
     }

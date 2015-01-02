@@ -1,6 +1,5 @@
 package pl.edu.agh.spciaa.spline;
 
-import pl.edu.agh.spciaa.Basis;
 
 class Conf {
 
@@ -14,7 +13,7 @@ class Conf {
         this.dt = dt;
         this.p = p;
         
-        knot = Basis.makeKnot(elems(), p);
+        knot = SplineBasis.makeKnot(elems(), p);
     }
 
     public int elems() {

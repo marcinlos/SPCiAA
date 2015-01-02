@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import pl.edu.agh.spciaa.Basis;
 import pl.edu.agh.spciaa.Executor;
 import pl.edu.agh.spciaa.Matrix;
 import pl.edu.agh.spciaa.PlotFrame;
@@ -173,7 +172,7 @@ public class Application {
         System.out.println("Solution:");
         System.out.println(Pretty.formatRow(x));
 
-        Basis s = new Basis(conf.knot, conf.p);
+        SplineBasis s = new SplineBasis(conf.knot, conf.p);
         
         int N = 400;
         

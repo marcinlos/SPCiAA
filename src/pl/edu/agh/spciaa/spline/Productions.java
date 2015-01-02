@@ -1,6 +1,5 @@
 package pl.edu.agh.spciaa.spline;
 
-import pl.edu.agh.spciaa.Basis;
 import pl.edu.agh.spciaa.GaussQuad;
 import pl.edu.agh.spciaa.Matrix;
 
@@ -96,7 +95,7 @@ class A extends Production {
         double e0 = node.elem.a;
         double e1 = node.elem.b;
         
-        Basis knot = new Basis(conf.knot, conf.p);
+        SplineBasis knot = new SplineBasis(conf.knot, conf.p);
         
         double[] g = GaussQuad.points(conf.p + 1);
         double[] w = GaussQuad.weights(conf.p + 1);
