@@ -1,5 +1,7 @@
 package pl.edu.agh.spciaa;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,23 +15,26 @@ public class Executor {
     private CountDownLatch barrier;
     
     private final Runnable decrementBarrier = () -> { barrier.countDown(); };
-
-    public CountDownLatch beginStage(int productions) {
-        if (barrier != null) {
-            throw new RuntimeException("Stage not finished");
-        }
-        barrier = new CountDownLatch(productions);
-        return barrier;
-    }
+    
+    private final List<Task> taskQueue = new ArrayList<>();
     
     public void submit(Task task) {
-        checkStage();
         task.doAfterAction(decrementBarrier);
-        executor.submit(task);
+        taskQueue.add(task);
     }
     
-    public void endStage() {
-        checkStage();
+    public void runStage() {
+        int tasks = taskQueue.size();
+        barrier = new CountDownLatch(tasks);
+        
+        for (Task task: taskQueue) {
+            executor.submit(task);
+        }
+        taskQueue.clear();
+        endStage();
+    }
+    
+    private void endStage() {
         try {
             barrier.await();
             barrier = null;
@@ -38,12 +43,6 @@ public class Executor {
         }
     }
 
-    private void checkStage() {
-        if (barrier == null) {
-            throw new RuntimeException("No stage");
-        }
-    }
-    
     public void shutdown() {
         executor.shutdown();
         try {

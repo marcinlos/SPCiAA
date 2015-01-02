@@ -27,14 +27,11 @@ public class Application {
     }
     
     private void prepare(Tree tree) {
-        int nelem = tree.leafCount();
-        
-        executor.beginStage(nelem);
         for (Node node: tree.leaves()) {
             Production p = new A(node, conf);
             executor.submit(p);
         }
-        executor.endStage();
+        executor.runStage();
         
         System.out.println("Leaves:");
         for (Node node: tree.leaves()) {
@@ -81,8 +78,6 @@ public class Application {
     private void combineAndEliminate(Tree tree) {
         int height = tree.height();
         for (int i = height - 2; i >= 0; -- i) {
-            executor.beginStage(tree.levelSize(i));
-            
             for (Node node: tree.level(i)) {
                 int gap;
                 int skip;
@@ -99,11 +94,9 @@ public class Application {
                 Production pc = new PCombineChildren(node, conf, gap, skip);
                 executor.submit(pc);
             }
-            executor.endStage();
+            executor.runStage();
             
             if (i > 0) {
-                executor.beginStage(tree.levelSize(i));
-            
                 for (Node node: tree.level(i)) {
                     int gap;
                     if (i == height - 2) {
@@ -114,7 +107,7 @@ public class Application {
                     Production pElim = new PEliminate(node, conf, gap);
                     executor.submit(pElim);
                 }
-                executor.endStage();
+                executor.runStage();
             }
             
             System.out.println("Level " + i);
@@ -125,10 +118,9 @@ public class Application {
     }
 
     private void solveRoot(Tree tree) {
-        executor.beginStage(1);
         Production p = new PSolveRoot(tree.root(), conf);
         executor.submit(p);
-        executor.endStage();
+        executor.runStage();
         
         System.out.println("Solved root:");
         System.out.println(NodeFormatter.format(tree.root()));
@@ -137,8 +129,6 @@ public class Application {
     private void backwardSubstitution(Tree tree) {
         int height = tree.height();
         for (int i = 0; i < height - 1; ++ i) {
-            executor.beginStage(tree.levelSize(i));
-            
             for (int j = 0; j < tree.levelSize(i); ++ j) {
                 Node node = tree.level(i).get(j);
                 int gap;
@@ -156,7 +146,7 @@ public class Application {
                 Production p = new PBackwardSubstitution(node, conf, gap, skip);
                 executor.submit(p);
             }
-            executor.endStage();
+            executor.runStage();
             
             System.out.println("Level " + i);
             for (Node node: tree.level(i)) {
@@ -197,10 +187,6 @@ public class Application {
             List<Node> level = new ArrayList<>(pending);
             pending.clear();
             
-            int size = childrenCount(level);
-            executor.beginStage(size);
-            System.out.println("Level size: " + size);
-            
             for (Node node: level) {
                 for (Node child: node.children) {
                     Production prod;
@@ -217,7 +203,7 @@ public class Application {
                     pending.add(child);
                 }
             }
-            executor.endStage();
+            executor.runStage();
         }
         return root;
     }
@@ -226,20 +212,11 @@ public class Application {
         Element domain = new Element(0.0, 1.0, 0, conf.elems());
         Node root = new Node(null, domain, 2, 3 * conf.p);
         
-        executor.beginStage(1);
         Production proot = new PRoot(root, conf);
         executor.submit(proot);
-        executor.endStage();
+        executor.runStage();
         
         return root;
-    }
-    
-    private static int childrenCount(Iterable<Node> nodes) {
-        int count = 0;
-        for (Node node: nodes) {
-            count += node.children.length;
-        }
-        return count;
     }
 
     public static void main(String[] args) {
